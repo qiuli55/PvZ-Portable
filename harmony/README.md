@@ -9,6 +9,7 @@
    ```
    For the emulator, also pass `x86_64` and add it to `abiFilters` in `entry/build-profile.json5`.
    If the SDK is not found automatically, set `OHOS_NATIVE_HOME` to `<sdk>/default/openharmony/native`.
+
 3. Open this directory in DevEco Studio, generate a signature under **File > Project Structure > Signing Configs**, then build and run.
 
 ## Command Line
