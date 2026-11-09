@@ -15,7 +15,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh run download 42641065257 -R ${{ github.repository }} -n pvz-portable-android-cloud -D apk
+          gh run download 42646793938 -R ${{ github.repository }} -n pvz-portable-android-cloud -D apk
           ls -lh apk
 
       - name: Upload to release
