@@ -56,6 +56,9 @@ public class PvZPortableActivity extends SDLActivity {
             return;
         }
 
+        // 启动前拉取云端存档，最多等待 3 秒，失败不影响正常进入游戏
+        CloudSync.restoreBlocking(this, extDir, 3000);
+
         super.onCreate(savedInstanceState);
         hideSystemUI();
         setupImeLayoutAdjustment();
@@ -78,6 +81,12 @@ public class PvZPortableActivity extends SDLActivity {
     @Override
     public void onBackPressed() {
         dispatchBackToSdl();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        CloudSync.backupAsync(this, getExternalFilesDir(null));
     }
 
     @Override
