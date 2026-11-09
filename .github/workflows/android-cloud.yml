@@ -44,6 +44,25 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
 
+      - name: Set up release signing
+        env:
+          KEYSTORE_B64: ${{ secrets.PVZP_KEYSTORE_B64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.PVZP_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.PVZP_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.PVZP_KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_B64" ]; then
+            echo "::error::PVZP_KEYSTORE_B64 is not configured"
+            exit 1
+          fi
+          printf '%s' "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/pvz-release.p12"
+          {
+            echo "PVZP_KEYSTORE_FILE=$RUNNER_TEMP/pvz-release.p12"
+            echo "PVZP_KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD"
+            echo "PVZP_KEY_ALIAS=$KEY_ALIAS"
+            echo "PVZP_KEY_PASSWORD=$KEY_PASSWORD"
+          } >> "$GITHUB_ENV"
+
       - name: Build APK
         run: |
           cd android
