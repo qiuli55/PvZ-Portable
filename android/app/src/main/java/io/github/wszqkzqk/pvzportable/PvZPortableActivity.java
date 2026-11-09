@@ -24,6 +24,8 @@ package io.github.wszqkzqk.pvzportable;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -43,6 +45,15 @@ public class PvZPortableActivity extends SDLActivity {
     private static final String TAG = "PvZPortable";
     private OnBackInvokedCallback mBackCallback;
 
+    private final Handler cloudHandler = new Handler(Looper.getMainLooper());
+    private final Runnable cloudSyncTick = new Runnable() {
+        @Override
+        public void run() {
+            CloudSync.backupAsync(PvZPortableActivity.this, getFilesDir());
+            cloudHandler.postDelayed(this, 90_000);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         File extDir = getExternalFilesDir(null);
@@ -56,8 +67,9 @@ public class PvZPortableActivity extends SDLActivity {
             return;
         }
 
-        // 启动前拉取云端存档，最多等待 3 秒，失败不影响正常进入游戏
-        CloudSync.restoreBlocking(this, extDir, 3000);
+        // 启动前拉取云端存档。SDL3 在 Android 上把存档写在内部存储 files 目录，
+        // 与 getExternalFilesDir（资源目录）不是同一个位置。
+        CloudSync.restoreBlocking(this, getFilesDir(), 3000);
 
         super.onCreate(savedInstanceState);
         hideSystemUI();
@@ -86,7 +98,21 @@ public class PvZPortableActivity extends SDLActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        CloudSync.backupAsync(this, getExternalFilesDir(null));
+        cloudHandler.removeCallbacks(cloudSyncTick);
+        CloudSync.backupAsync(this, getFilesDir());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        CloudSync.backupAsync(this, getFilesDir());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cloudHandler.removeCallbacks(cloudSyncTick);
+        cloudHandler.postDelayed(cloudSyncTick, 90_000);
     }
 
     @Override
