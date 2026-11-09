@@ -1,0 +1,28 @@
+name: Publish APK to release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact from build run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 42632382331 -R ${{ github.repository }} -n pvz-portable-android-cloud -D apk
+          ls -lh apk
+
+      - name: Upload to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete pvz-cloud-apk --yes -R ${{ github.repository }} || true
+          gh release create pvz-cloud-apk apk/*.apk -R ${{ github.repository }} \
+            --title "PvZ-Portable Android cloud save" \
+            --notes "Android APK with cloud save sync (arm64-v8a)."
