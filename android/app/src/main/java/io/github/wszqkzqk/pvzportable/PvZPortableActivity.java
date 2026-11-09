@@ -49,7 +49,7 @@ public class PvZPortableActivity extends SDLActivity {
     private final Runnable cloudSyncTick = new Runnable() {
         @Override
         public void run() {
-            CloudSync.backupAsync(PvZPortableActivity.this, getFilesDir());
+            CloudSync.backupAsync(PvZPortableActivity.this, CloudSync.gameDir(PvZPortableActivity.this));
             cloudHandler.postDelayed(this, 90_000);
         }
     };
@@ -67,9 +67,9 @@ public class PvZPortableActivity extends SDLActivity {
             return;
         }
 
-        // 启动前拉取云端存档。SDL3 在 Android 上把存档写在内部存储 files 目录，
-        // 与 getExternalFilesDir（资源目录）不是同一个位置。
-        CloudSync.restoreBlocking(this, getFilesDir(), 3000);
+        // 启动前拉取云端存档。游戏存档与资源同在应用的外部私有目录，
+        // 即 SDL_GetAndroidExternalStoragePath()。
+        CloudSync.restoreBlocking(this, CloudSync.gameDir(this), 3000);
 
         super.onCreate(savedInstanceState);
         hideSystemUI();
@@ -99,13 +99,13 @@ public class PvZPortableActivity extends SDLActivity {
     protected void onPause() {
         super.onPause();
         cloudHandler.removeCallbacks(cloudSyncTick);
-        CloudSync.backupAsync(this, getFilesDir());
+        CloudSync.backupAsync(this, CloudSync.gameDir(this));
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        CloudSync.backupAsync(this, getFilesDir());
+        CloudSync.backupAsync(this, CloudSync.gameDir(this));
     }
 
     @Override

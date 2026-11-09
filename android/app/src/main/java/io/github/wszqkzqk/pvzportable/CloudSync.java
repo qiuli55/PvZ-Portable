@@ -58,6 +58,21 @@ public final class CloudSync {
     }
 
     /**
+     * 游戏实际使用的存档目录。PvZ-Portable 在 Android 上取
+     * SDL_GetAndroidExternalStoragePath()，即应用的外部私有目录，与资源目录相同。
+     */
+    public static File gameDir(Context ctx) {
+        File dir = ctx.getExternalFilesDir(null);
+        if (dir == null) {
+            dir = ctx.getFilesDir();
+        }
+        if (dir != null && !dir.exists()) {
+            dir.mkdirs();
+        }
+        return dir;
+    }
+
+    /**
      * 启动前同步拉取云端存档，最多等待 waitMs 毫秒，避免主线程长时间阻塞。
      */
     public static void restoreBlocking(Context ctx, File filesDir, long waitMs) {
