@@ -5480,6 +5480,26 @@ void Board::UpdateProgressMeter()
 
 void Board::UpdateTutorial()
 {
+	if (mApp->mEasyPlantingCheat)
+	{
+		// cheat build: seed packets never go on cooldown, so the tutorial's
+		// "wait for packet refresh" states would never advance and zombies
+		// would never spawn. Skip those states.
+		if (mTutorialState == TutorialState::TUTORIAL_LEVEL_1_REFRESH_PEASHOOTER)
+		{
+			SetTutorialState(mPlants.mSize >= 2 ? TutorialState::TUTORIAL_LEVEL_1_COMPLETED
+												: TutorialState::TUTORIAL_LEVEL_1_PICK_UP_PEASHOOTER);
+		}
+		else if (mTutorialState == TutorialState::TUTORIAL_LEVEL_2_REFRESH_SUNFLOWER)
+		{
+			SetTutorialState(TutorialState::TUTORIAL_LEVEL_2_PICK_UP_SUNFLOWER);
+		}
+		else if (mTutorialState == TutorialState::TUTORIAL_MORESUN_REFRESH_SUNFLOWER)
+		{
+			SetTutorialState(TutorialState::TUTORIAL_MORESUN_PICK_UP_SUNFLOWER);
+		}
+	}
+
 	if (mTutorialTimer > 0)
 		mTutorialTimer--;
 
