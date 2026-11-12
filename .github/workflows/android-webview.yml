@@ -1,0 +1,33 @@
+name: android-webview
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - webview-shell
+
+jobs:
+  build-webview-apk:
+    name: Build WebView shell APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Build debug APK
+        run: |
+          cd webview-shell
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          gradle wrapper
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: pvz-cheat-webview-apk
+          path: webview-shell/app/build/outputs/apk/debug/*.apk
