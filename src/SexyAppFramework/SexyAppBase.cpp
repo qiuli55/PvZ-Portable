@@ -3402,7 +3402,7 @@ void SexyAppBase::Init()
 	}
 #elif defined(__EMSCRIPTEN__)
 	{
-		SetAppDataFolder("/saves/");
+		SetAppDataFolder("/saves-cheat/");
 	}
 #elif !defined(__SWITCH__)
 	{
