@@ -1,0 +1,36 @@
+name: wasm-cheat
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - cheat-easyplanting
+
+jobs:
+  build-wasm-cheat:
+    name: Build cheat WebAssembly
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+
+    - name: Setup Emscripten
+      uses: emscripten-core/setup-emsdk@v16
+
+    - name: Install Build Tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ninja-build
+
+    - name: Build PvZ-Portable for WebAssembly
+      run: ./wasm/build-wasm.sh --deps
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v7
+      with:
+        name: pvz-portable-wasm-cheat
+        path: |
+          build-wasm/pvz-portable.html
+          build-wasm/pvz-portable.js
+          build-wasm/pvz-portable.wasm

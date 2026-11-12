@@ -149,7 +149,7 @@ LawnApp::LawnApp()
 	mLastLevelStats = std::make_unique<LevelStats>();
 	mFirstTimeGameSelector = true;
 	mGameMode = GameMode::GAMEMODE_ADVENTURE;
-	mEasyPlantingCheat = false;
+	mEasyPlantingCheat = true; // cheat build: free planting (no sun cost, no seed cooldown)
 	mAutoEnable3D = true;
 	Pvzp_SWTri_AddAllDrawTriFuncs();
 	mLoadingZombiesThreadCompleted = true;
