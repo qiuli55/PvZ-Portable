@@ -735,6 +735,13 @@ void Coin::Update()
 		return;
 	}
 
+	if (mApp->mAutoCollectSunCheat && !mIsBeingCollected && mFadeCount == 0 && mHitGround && IsSun())
+	{
+		// cheat build: scoop up every sun as soon as it lands
+		PlayCollectSound();
+		Collect();
+	}
+
 	if (mFadeCount != 0)
 	{
 		UpdateFade();

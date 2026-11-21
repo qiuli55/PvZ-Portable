@@ -150,6 +150,8 @@ LawnApp::LawnApp()
 	mFirstTimeGameSelector = true;
 	mGameMode = GameMode::GAMEMODE_ADVENTURE;
 	mEasyPlantingCheat = true; // cheat build: free planting (no sun cost, no seed cooldown)
+	mInfiniteCoinsCheat = true; // cheat build: coins are pinned to the maximum
+	mAutoCollectSunCheat = true; // cheat build: sun is collected automatically
 	mAutoEnable3D = true;
 	Pvzp_SWTri_AddAllDrawTriFuncs();
 	mLoadingZombiesThreadCompleted = true;
@@ -1550,6 +1552,12 @@ void LawnApp::UpdatePlayTimeStats()
 
 void LawnApp::UpdateFrames()
 {
+	if (mInfiniteCoinsCheat && mPlayerInfo && mPlayerInfo->mCoins < 99999)
+	{
+		// cheat build: keep the wallet topped up so every store item is affordable
+		mPlayerInfo->mCoins = 99999;
+	}
+
 	if ((!mActive || mMinimized) && mBoard)
 	{
 		mBoard->ResetFPSStats();

@@ -94,6 +94,8 @@ public:
 	int								mMaxPlays;
 	int								mMaxTime;
 	bool							mEasyPlantingCheat;
+	bool							mInfiniteCoinsCheat;
+	bool							mAutoCollectSunCheat;
 	std::unique_ptr<PoolEffect>		mPoolEffect;
 	std::unique_ptr<ZenGarden>		mZenGarden;
 	std::unique_ptr<EffectSystem>	mEffectSystem;
